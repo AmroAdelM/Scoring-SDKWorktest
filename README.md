@@ -2,9 +2,13 @@
 This document provides an overview of the implementation of the tiny game client SDK in C++. The purpose of this SDK is to provide essential functionality to multiple games that each have their own tech stack and requirements. 
 
 # Functionality
-1. Store and retrieve a user’s score for each level of a game. Users are represented by a numeric ID.
+1. Store and retrieve a user’s score for each level of a game.
+    - void storeScore(int userId, int levelId, int score);
+    - int retrieveScore(int userId, int levelId);
 2. Retrieve a top-list of all known scores for a given level.
+    - std::vector<std::tuple<int, int, int>> retrieveToplist(int levelId);
 3. Retrieve the highest score of all levels for a single user.
+    - std::pair<int, int> retrieveHighestScore(int userId);
 
 # Implementation Details
 - The ScoringSDK class provides the main interface for interacting with the SDK. The class holds a vector of Score structs that represent the scores for each user and level.
@@ -18,6 +22,13 @@ This document provides an overview of the implementation of the tiny game client
 # Assumptions
 The text file storing the scores will be in the format of one score per line, with each line containing the user ID, level, and score separated by commas.
 The file handling implementation provided by the IFileHandler interface and the FileSystemHandler class is sufficient for the needs of the games using the SDK. If additional file handling functionality is needed, a new implementation of the FileHandler interface will need to be created.
+
+# Integration steps
+To integrate the SDK into different tech stacks, you need to perform the following steps:
+
+1. Include the header file for the SDK in your project: #include "GameClientSDK.h"
+2. Implement a class that implements the IFileHandler interface. This class will handle reading and writing scores independently.
+3. Create an instance of the ScoringSDK class, passing an instance of the IFileHandler new class implementation to the constructor.
 
 # Future Work
 - Adding support for saving/reading scores from a database instead of a text file.
