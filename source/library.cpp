@@ -11,7 +11,7 @@ namespace storage {
 	{}
 	void FileSystemHandler::save_scores(const std::multiset<Score, std::greater<Score>>& scores)
 	{
-		std::ofstream file(file_name);
+		std::ofstream file(m_fileName);
 		if (!file.is_open())
 		{
 			std::cerr << "Failed to open file for writing." << std::endl;
@@ -29,7 +29,7 @@ namespace storage {
 	{
 		std::multiset<Score, std::greater<Score>> scores;
 
-		std::ifstream file(file_name);
+		std::ifstream file(m_fileName);
 		if (!file.is_open())
 		{
 			std::cerr << "Failed to open file for reading." << std::endl;
@@ -40,36 +40,36 @@ namespace storage {
 		while (std::getline(file, line))
 		{
 			std::istringstream linestream(line);
-			std::string user_id_str, level_str, score_str;
+			std::string userId_str, levelId_str, score_str;
 
-			std::getline(linestream, user_id_str, ',');
-			std::getline(linestream, level_str, ',');
+			std::getline(linestream, userId_str, ',');
+			std::getline(linestream, levelId_str, ',');
 			std::getline(linestream, score_str, ',');
 
-			int user_id = std::stoi(user_id_str);
-			int level = std::stoi(level_str);
+			int userId = std::stoi(userId_str);
+			int levelId = std::stoi(levelId_str);
 			int score = std::stoi(score_str);
-			scores.insert(Score(user_id, level, score));
+			scores.insert(Score(userId, levelId, score));
 		}
 		file.close();
 		return scores;
 	}
 
-	ScoringSDK::ScoringSDK(IFileHandler& tmp) : fileHandler(tmp)
+	ScoringSDK::ScoringSDK(IFileHandler& tmp) : m_fileHandler(tmp)
 	{
-		scores = fileHandler.read_scores();
+		m_scores = m_fileHandler.read_scores();
 	}
 
 	void ScoringSDK::storeScore(int userId, int levelId, int score)
 	{
-		scores.insert(Score(userId, levelId, score));
-		fileHandler.save_scores(scores);
+		m_scores.insert(Score(userId, levelId, score));
+		m_fileHandler.save_scores(m_scores);
 	}
 
 	int ScoringSDK::retrieveScore(int userId, int levelId)
 	{
-		scores = fileHandler.read_scores();
-		for (const auto& itr : scores)
+		m_scores = m_fileHandler.read_scores();
+		for (const auto& itr : m_scores)
 		{
 			if (itr.userId == userId && itr.levelId == levelId)
 			{
@@ -83,7 +83,7 @@ namespace storage {
 	std::vector<std::tuple<int, int, int>> ScoringSDK::retrieveToplist(int levelId)
 	{
 		std::vector<std::tuple<int, int, int>> levelList;
-		for (auto itr = scores.begin(); itr != scores.end(); itr++)
+		for (auto itr = m_scores.begin(); itr != m_scores.end(); itr++)
 		{
 			if (itr->levelId == levelId)
 			{
@@ -95,7 +95,7 @@ namespace storage {
 
 	std::pair<int, int> ScoringSDK::retrieveHighestScore(int userId)
 	{
-		for (auto& itr : scores)
+		for (auto& itr : m_scores)
 		{
 			if (itr.userId == userId)
 			{

@@ -14,7 +14,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_library(worktest-sdk source/library.cpp include/library.h)
+add_library(worktest-sdk SHARED source/library.cpp)
 
 enable_testing()
 

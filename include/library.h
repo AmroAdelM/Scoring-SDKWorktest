@@ -24,18 +24,18 @@ namespace storage {
 	class IFileHandler
 	{
 	public:
-		IFileHandler(const std::string& file_name) : file_name(file_name) {}
+		IFileHandler(const std::string& fileName) : m_fileName(fileName) {}
 		virtual void save_scores(const std::multiset<Score, std::greater<Score>>& scores) = 0;
 		virtual std::multiset<Score, std::greater<Score>> read_scores() = 0;
 
 	protected:
-		std::string file_name;
+		std::string m_fileName;
 	};
 
 	class FileSystemHandler : public IFileHandler
 	{
 	public:
-		FileSystemHandler(const std::string& file_name);
+		FileSystemHandler(const std::string& fileName);
 		virtual ~FileSystemHandler() = default;
 		void save_scores(const std::multiset<Score, std::greater<Score>>& scores) override;
 		std::multiset<Score, std::greater<Score>> read_scores() override;
@@ -47,12 +47,12 @@ namespace storage {
 		ScoringSDK(IFileHandler&);
 		void storeScore(int userId, int levelId, int score);
 		int retrieveScore(int userId, int levelId);
-		std::vector<std::tuple<int, int, int>> retrieveToplist(int level);
+		std::vector<std::tuple<int, int, int>> retrieveToplist(int levelId);
 		std::pair<int, int> retrieveHighestScore(int userId);
 
 	private:
-		std::multiset<Score, std::greater<Score>> scores;
-		IFileHandler& fileHandler;
+		std::multiset<Score, std::greater<Score>> m_scores;
+		IFileHandler& m_fileHandler;
 	};
 }
 
